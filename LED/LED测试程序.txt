@@ -1,0 +1,41 @@
+/*******************************************************
+
+程序功能：LED测试程序
+
+开发环境：Keil3
+
+硬件环境：CEPARK51 V4.0，STC12C5A60S2，12M晶振
+
+实验现象：8个LED流水显示，然后闪烁
+
+论坛支持：http://bbs.cepark.com
+
+作者：kidcao1987  
+时间：2011-03-18
+
+*******************************************************/
+
+#include "REG52.h"
+
+sbit led=P2^0;
+
+void Delay(unsigned int);	//延时函数
+
+void main(void)
+{
+	while(1)
+	{
+			led=0;
+			Delay(60000);
+		  led=1;
+		  Delay(60000);
+	}
+}
+
+
+//延时函数
+void Delay(unsigned int m)
+{
+	while(m--);
+}
+

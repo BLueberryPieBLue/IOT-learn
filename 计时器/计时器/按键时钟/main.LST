@@ -1,0 +1,92 @@
+C51 COMPILER V9.02   MAIN                                                                  11/22/2018 15:05:44 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\SoftWare\keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          
+   2          /*
+   3           *        按键时钟 秒表，可以通过按键开始或是停止
+   4           */
+   5          #include<reg52.h>
+   6          #define uchar unsigned char
+   7          
+   8          sbit key =P3 ^ 3; //按键
+   9          
+  10          uchar counter=0,tmp,second=0,minute=0, change = 1;
+  11          int led[]= {0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90}; //数字0-9
+  12          int _led[]= {0x40, 0x79, 0x24, 0x30, 0x19, 0x12, 0x02, 0x78, 0x00, 0x10};
+  13          
+  14          void clockrun();
+  15          
+  16          void main() {
+  17   1          //设置TMOD寄存器
+  18   1          TMOD=0X01;                                                  //设置TMOD寄存器
+  19   1          TH0=(65536-5000)/256;                          //装初值
+  20   1          TL0=(65536-5000)%256;
+  21   1          EA=1;               //开 中断
+  22   1          ET0=1;
+  23   1          TR0=1;
+  24   1          if(key==0) {//按键按下
+  25   2              while(1) {
+  26   3                  clockrun();
+  27   3              }
+  28   2          }
+  29   1      
+  30   1      }
+  31          void zhongduan()interrupt 1 {
+  32   1          TH0=(65536-5000)/256;                          //装初值
+  33   1          TL0=(65536-5000)%256;
+  34   1          TF0=0;
+  35   1          TR0=1;
+  36   1          counter++;
+  37   1          if(counter==200) {
+  38   2              counter=0;
+  39   2              second++;
+  40   2              if(second==60) {
+  41   3                  second=0;
+  42   3                  minute++;
+  43   3              }
+  44   2          }
+  45   1          change = 1;
+  46   1      }
+  47          void clockrun() {
+  48   1          tmp=counter%4;
+  49   1          switch(tmp) {
+  50   2          case 0:
+  51   2              P2 = 0x7f;
+  52   2              P0 = led[second%10];
+  53   2              break;
+  54   2          case 1:
+  55   2              P2 = 0xbf;
+C51 COMPILER V9.02   MAIN                                                                  11/22/2018 15:05:44 PAGE 2   
+
+  56   2              P0 = led[second/10];
+  57   2              break;
+  58   2          case 2:
+  59   2              P2 = 0xdf;
+  60   2              P0 = _led[minute%10];
+  61   2              break;
+  62   2          case 3:
+  63   2              P2 = 0xef;
+  64   2              P0 = led[minute/10];
+  65   2              break;
+  66   2          }
+  67   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    147    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     45    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

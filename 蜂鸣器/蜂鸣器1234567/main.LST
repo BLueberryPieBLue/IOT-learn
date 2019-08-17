@@ -1,0 +1,91 @@
+C51 COMPILER V9.02   MAIN                                                                  05/30/2018 22:43:24 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          
+   2          #include <reg52.h>   
+   3          #define uchar unsigned char 
+   4          sbit      beep=P1^1;    //定义蜂鸣器输出端口
+   5          uchar timer0h,timer0l,time;
+   6          
+   7          code uchar sszymmh[]={1,1,1,2,1,1,3,1,1,4,1,1,5,1,1,6,1,1,7,1,1,
+   8                                                };
+   9                                   // 音阶频率表 高八位
+  10          code uchar FREQH[]={0xF2,0xF3,0xF5,0xF5,0xF6,0xF7,0xF8, 
+  11                              0xF9,0xF9,0xFA,0xFA,0xFB,0xFB,0xFC,0xFC, //1,2,3,4,5,6,7,8,i
+  12                              0xFC,0xFD,0xFD,0xFD,0xFD,0xFE,
+  13                              0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFF,} ;
+  14                                   // 音阶频率表 低八位
+  15          code uchar FREQL[]={0x42,0xC1,0x17,0xB6,0xD0,0xD1,0xB6,
+  16                              0x21,0xE1,0x8C,0xD8,0x68,0xE9,0x5B,0x8F, //1,2,3,4,5,6,7,8,i
+  17                              0xEE,0x44, 0x6B,0xB4,0xF4,0x2D, 
+  18                              0x47,0x77,0xA2,0xB6,0xDA,0xFA,0x16,};
+  19          void delay(uchar t)               // 延时函数 
+  20          {
+  21   1              uchar t1;
+  22   1              unsigned long t2;
+  23   1              for(t1=0;t1<t;t1++)
+  24   1              {
+  25   2                      for(t2=0;t2<8000;t2++);
+  26   2              }
+  27   1              TR0=0;
+  28   1      }
+  29          void song()                              //  音乐处理函数
+  30          {
+  31   1              TH0=timer0h;
+  32   1              TL0=timer0l;
+  33   1              TR0=1;
+  34   1              delay(time);                       
+  35   1      }
+  36          /******************************************************************
+  37                                                  主函数                                      
+  38          ******************************************************************/
+  39          void main(void)
+  40          {
+  41   1              uchar k,i;
+  42   1              TMOD=1;                         //置CT0定时工作方式1
+  43   1              EA=1;
+  44   1              ET0=1;                          //IE=0x82 //CPU开中断,CT0开中断 
+  45   1              while(1)
+  46   1              {
+  47   2                      i=0;  
+  48   2                      while(i<100)                              //音乐数组长度 ，唱完从头再来  
+  49   2                      {              
+  50   3                              k=sszymmh[i]+7*sszymmh[i+1]-1;
+  51   3                              timer0h=FREQH[k];
+  52   3                              timer0l=FREQL[k];
+  53   3                              time=sszymmh[i+2];
+  54   3                              i=i+3;
+  55   3                              song();
+C51 COMPILER V9.02   MAIN                                                                  05/30/2018 22:43:24 PAGE 2   
+
+  56   3                      }
+  57   2              } 
+  58   1      }
+  59          void t0int() interrupt 1                //定时器中断函数
+  60          {
+  61   1              TR0=0;
+  62   1              beep=!beep;
+  63   1              TH0=timer0h;
+  64   1              TL0=timer0l;
+  65   1              TR0=1;
+  66   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    169    ----
+   CONSTANT SIZE    =     77    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3       8
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

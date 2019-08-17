@@ -1,0 +1,145 @@
+按键控制时钟：
+#include <reg52.h>
+#define uchar unsigned char 
+sbit P2_4 = P2^4;
+sbit P2_5 = P2^5;
+sbit P2_6 = P2^6;
+sbit P2_7 = P2^7;
+sbit K1 = P3^2;
+
+static unsigned char second,minute,hour;
+unsigned int tcount;
+unsigned char m,q;
+uchar code table[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,
+                        0xf8,0x80,0x90};
+void delay(uchar i)
+{
+  uchar j,k; 
+  for(j=i;j>0;j--)
+    for(k=125;k>0;k--);
+}
+
+void display()
+{
+  
+   P0=table[minute/10];
+   P2_4 = 0;
+   delay(5);
+   P2_4 = 1;
+
+   P0=(table[minute%10]& 0x7f);
+   P2_5 = 0;
+   delay(5);
+   P2_5 = 1;
+
+   P0=table[second/10];
+   P2_6 = 0;
+   delay(5);
+   P2_6 = 1;
+
+    P0=table[second%10];
+   P2_7 = 0;
+   delay(5);
+   P2_7 = 1;
+   
+}
+
+/*演示主程序*/
+void main(void)
+{
+    unsigned int  a;
+	TMOD=0x02;
+    TH0=0x06;
+    TL0=0x06;
+    TR0=1;
+    ET0=1;
+    EA=1;
+   
+ while(1)
+ {
+ 
+   for(a=100;a>0;a--)
+   {
+     display();
+   }
+ 
+ }
+}
+
+
+/*
+********************************************************************************
+** 函数名称 ： t0(void) interrupt 1 using 0
+** 函数功能 ： 定时器中断
+********************************************************************************
+*/
+
+ void t0(void) interrupt 1 using 0 
+{
+   switch(q)
+   {
+     case(0):if(K1==0){break;
+	  } else{	tcount++;
+    if(tcount==4000)
+	  {tcount=0;
+	    second++;
+
+		 if(second==60)
+		  {second=0;
+		   minute++;
+
+		    if(minute==60)
+			 {
+			   minute=0;
+			   hour++;
+
+			  if(hour==24)
+			   {
+			     hour=0;
+			   }
+			 }
+		  }
+	  }}
+
+	 
+   }
+
+
+  2^16=65535
+  2^8=256
+
+f=12M
+时钟周期T=1/f=1/12M;
+TH0 _ _ _ _ _ _ _ _ (8)
+TH1 _ _ _  _ _ _ _ _(8)
+
+65535-(--1)|---------->0
+	 ^
+	  |
+	 x
+TH0 (65535-x)/256
+TH1 (65535-x)%256
+
+
+h g f e d c b a
+0 1 1 1 1 1 1 1 
+
+ 	a
+f		b
+	g	
+e		c
+	d		h	
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

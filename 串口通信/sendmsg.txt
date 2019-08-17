@@ -1,0 +1,12 @@
+void sendmsg(uchar ps)
+{
+SBUF = ps;            // 要发送的字符放入缓冲区
+while(TI == 0);    // 一直等等，直到发送完数据为止
+TI = 0;
+}
+uchar rcvmsg(void)   //调用此函数前，要先调用RI,查看是否收到数据，确定已收到的话，再调用此函数
+{
+
+RI=0;                       //要先将RI=0再返回，否则，返回后，RI=0这句就不执行了。
+return SBUF;
+}

@@ -1,0 +1,85 @@
+C51 COMPILER V9.02   MAIN                                                                  12/23/2018 17:43:52 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\SoftWare\keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <reg52.h> 
+   2          #include <string.h>     
+   3          #define uchar unsigned char
+   4          #define uint unsigned int
+   5          uchar *dat,p[10];
+   6          int i;
+   7          sbit led0=P1^0;
+   8          sbit led1=P1^1;
+   9          sbit led2=P1^2;
+  10          sbit led3=P1^3;
+  11          void main()
+  12          {       
+  13   1              TMOD=0x20;                 //用定时器设置串口波特率
+  14   1              TH1=0xfd;
+  15   1              TL1=0xfd;
+  16   1              TR1=1;
+  17   1              REN=1;          //串口初始化
+  18   1              SM0=0;
+  19   1              SM1=1;
+  20   1              EA=1;           //开启总中断
+  21   1              ES=1;                   //开启串口中断
+  22   1              while(1){
+  23   2          
+  24   2              }
+  25   1      }       
+  26          
+  27          void ser() interrupt 4
+  28          {
+  29   1      /*      *dat=SBUF;//接收数据SBUF，即将计算机的数据接收。
+  30   1          RI = 0;//清除接收中断标志位
+  31   1                  if(*dat=='0'){led0=0;led1=0;led2=0;led3=0;}
+  32   1                      if(*dat=='9'){led0=1;led1=1;led2=1;led3=1;}             
+  33   1          SBUF=*dat;//将接收到的数据放入到发送寄存器
+  34   1          while(!TI); //等待发送数据完成
+  35   1          TI=0;//清除发送完成标志位*/
+  36   1              uchar i=0;
+  37   1              if(RI){
+  38   2              p[i]=SBUF;
+  39   2              }
+  40   1              i++;
+  41   1              if(i>4){
+  42   2              i=0;
+  43   2              }
+  44   1              if(TI){
+  45   2              TI=0;
+  46   2              }       
+  47   1       }       
+  48          
+  49            
+  50          /*
+  51          串口通信 向电脑发送字符串（任意） 、数字。
+  52          电脑向单片机发送数字，字符。
+  53          扩展：
+  54          加入网页，通过网页发送接收数据（后期有用，暂不做要求）
+  55          审核内容：
+C51 COMPILER V9.02   MAIN                                                                  12/23/2018 17:43:52 PAGE 2   
+
+  56          1、单片机每两秒（定时器完成）向pc发送一个字符串，每次发送内容包括一行数字（当前秒数），一行字符串任意。
+  57          2、pc向单片机发送“123” 则单片机向pc发送当前秒数，如果发送“321”发送字符串“get 321！” 。
+  58          3、pc向单片机发送“0”，单片机开启所有小灯，发送”9”关闭所有小灯。
+  59          
+  60          */
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     63    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     15    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,23 @@
+#include "REG52.h"    //引入头文件
+
+void Delay(unsigned int);	//延时函数
+
+void main(void)
+{
+	while(1)
+	{
+		P2=0x0C;             //led对应的I/O口，低电平时LED亮
+		Delay(20000);
+		P2=0x03;
+		Delay(20000);
+	}
+}
+
+
+//延时函数
+void Delay(unsigned int m)
+{
+	while(m--);
+}
+
+
